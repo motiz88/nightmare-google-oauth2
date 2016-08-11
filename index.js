@@ -20,7 +20,7 @@ const getCode = exports.getCode = function (params, callback, onChange) {
   }
 
   return function (nightmare) {
-    startCallbackServer(callback, nightmare)
+    startCallbackServer(callback, nightmare, params.timeout || maxTimeout)
 
     nightmare
       .viewport(800, 1600)
@@ -149,7 +149,7 @@ const getToken = exports.getToken = function (params, callback, onChange) {
   }, onChange)
 }
 
-function startCallbackServer (callback, nightmare) {
+function startCallbackServer (callback, nightmare, timeout) {
   callback = once(callback)
 
   var server = http.createServer(function (req, res) {
@@ -178,7 +178,7 @@ function startCallbackServer (callback, nightmare) {
         nightmare.end(noop)
         callback(new Error('Cannot retrieve the token. Timeout exceeded'))
       }
-    }, maxTimeout)
+    }, timeout || maxTimeout)
   })
 }
 
